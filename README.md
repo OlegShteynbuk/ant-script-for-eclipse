@@ -14,9 +14,9 @@
 	- [final-thoughts](#final-thoughts)
 - [optional-properties](#optional-properties)
 - [checkdir-ant-task](#checkdir-ant-task)
-	- [Parameters](#Parameters)
+	- [Parameters](#parameters)
 - [ToDo](#todo)
-- [Acknowledgments](#Acknowledgments)
+- [Acknowledgments](#acknowledgments)
 - [Introduction](#introduction)
 
 
