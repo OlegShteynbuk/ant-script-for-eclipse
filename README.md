@@ -1,5 +1,10 @@
 # Ant Script to Update/Install Eclipse
 
+The following text was  written several years ago, at the same time as
+the script; some statements might look
+slightly dated but I have decided to leave the original text intact to
+preserve the spirit of the time.
+
 ## Contents
 
 
@@ -17,7 +22,6 @@
 	- [Parameters](#parameters)
 - [ToDo](#todo)
 - [Acknowledgments](#acknowledgments)
-- [Introduction](#introduction)
 
 
 ## Introduction
@@ -60,7 +64,7 @@ NOTE:  the value of the downloadBuild.file property should be set to the name of
 
 Below are the recommended steps; all directory names are specified in properties except for the eclipseHome directory that is created by the user.
 
-Download installUpdate.zip file from http://shteynbuk.com/
+Download installUpdate.zip file from https://shteynbuk.com/
 Create a new directory named eclipseHome.
 Unzip the installUpdate.zip file into eclipseHome directory. A directory named eclipseHome /installUpdate is created.
 Start command prompt.
