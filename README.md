@@ -1,6 +1,6 @@
 # Ant Script to Update/Install Eclipse
 
-The following text was has been written several years ago, at the same time as the script. Some statements might look slightly dated, but I have decided to leave the original text intact to preserve the spirit of the time.
+The following text has been written several years ago, at the same time as the script. Some statements might look slightly dated, but I have decided to leave the original text intact to preserve the spirit of the time.
 
 ## Contents
 
