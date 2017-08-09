@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="compile" name="installUpdateAntUtil">
+
+    <property name="build.home" value="${basedir}/.."/>
+   
+    <target name="compile">
+        <javac debug="true" destdir="${build.home}" srcdir="." />
+    </target>
+    
+    <target name="clean" description="remove .class files and javadoc dir">
+        <delete>
+            <fileset dir=".">
+                <include name="**/*.class"/>
+            </fileset>
+        </delete>
+        <delete dir="docs"/>
+    </target>
+    
+    <target name="javadoc" description="Javadoc">
+        <mkdir dir="docs/api"/>
+        <javadoc destdir="docs/api" packagenames="installUpdateAntUtil.*"
+        	sourcepath=".." />
+    </target>
+    
+</project>
+    
+   
+

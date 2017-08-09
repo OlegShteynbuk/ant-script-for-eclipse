@@ -1,0 +1,81 @@
+<p>December, 2007
+<br>added linux version and eclipse.sh file
+<p>December, 2007
+<br>added property eclipse.tar
+<p>November, 2007
+<br>added property copy.jars.dir
+<p>May 26, 2003
+<br>
+<p>August 8, 2003
+<br>updated documentation
+<p>May 26, 2003
+<br>
+updated <i>install-plugins</i> target to handle plugins with directory structure that starts with <i> eclipse</i> directory.
+<p>
+March 16, 2003
+<br>
+added new main target <i> uninstall-old-version</i> and helper target <i> remove-old-version-if-needed</i><br>
+added new optional property <i> old.version</i>.
+<br>
+updated documentation.
+<p>March 4, 2003
+<br>
+added the ability to install eclipse using directory name
+instead of file name.
+<br>
+changed property name from <i>currentBuild.file.name</i> to <i>downloadBuild.file</i>
+,<i> </i>new
+property <i>downloadBuild.dir</i>.&nbsp;&nbsp;
+<br>
+new targets:&nbsp; <i>validate-available-build,
+exit-if-build-not-available, extract-current-zipfile, extract-current-from-dir</i>.&nbsp;
+<br>
+added Ant task <i>checkdir</i> to check that
+there is only one suitable Eclipse build in installation directory.
+<br>
+updated documentation, two new chapters: <b> Optional Properties</b> and <b> Checkdir Ant
+Task</b>.
+<p>February 13, 2003
+<br>
+changed jvm selection rule in <i>eclipse.bat</i>.
+<br>
+improved documentation.
+<p>February 12, 2003
+<br>
+complete rewrite of <i>eclipse.bat</i>, do not need to keep in sync manualy with
+<i>installUpdate.properties </i>file.
+<br>
+added target <i> generate-startup-script</i> to sync <i> eclipse.bat</i> file with
+<i>installUpdate.properties </i>file if the later was modified after
+Eclipse installation.<p>February 4, 2003
+<br>
+Improved documentation and code comments.<p>January 22, 2003
+<br>
+With this changes, after you use this script once,
+you will never need to modify any properties at all, hopefully. &nbsp;
+<br>
+Changed directory structure: introduced <i> current</i> and <i> was_current</i> directories.&nbsp;<br>
+Install now always go into <i> current</i> directory and previous install, if
+there was one, become
+<i> was_current</i><br>
+Uninstall will restore previous install, if there was one.<br>
+Removed properties: <i>currentBuild.name</i>, <i>updateBuild.name</i>,
+<i>updateBuild.file</i>, <i> download.eclipse.dir</i><br>
+Property <i> currentBuild.file.name</i> now should include absolute path.<br>
+Added one main target <i>backup-workspace</i> and seven helper
+targets.<br>
+Removed targets: <i>update-eclipse</i>, <i> uninstall-update</i><i>.</i>&nbsp;<br>
+<i>install-plugins</i> target will unzip files from dir specified in
+<i> download.plugin.dir </i> property and all its subdirectories into external
+plugin
+directory.&nbsp; No need to have unzip task for each plugin.&nbsp;And you can
+keep your downloaded plugins in different directories.<br>
+Updated <em>readme.htm</em>  file.
+<p>January 18, 2003
+<br>
+Added external workspace. Added&nbsp;<EM>extPlugins.link</EM> property.&nbsp;
+<br>
+Configuration&nbsp;properties 
+were moved from <EM>build.xml</EM> file to <EM>installUpdate.properties</EM> file.
+<br>
+<EM>readme.htm</EM> file was not updated, see the code.

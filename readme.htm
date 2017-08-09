@@ -1,0 +1,651 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 12 (filtered)">
+<title>Update/Install Eclipse with Ant Script, different Update/Install
+Strategies</title>
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+h1
+	{mso-style-link:"Heading 1 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:"Arial","sans-serif";
+	font-weight:bold;}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Arial","sans-serif";
+	font-weight:bold;
+	font-style:italic;}
+h3
+	{margin-right:0in;
+	margin-left:0in;
+	font-size:13.5pt;
+	font-family:"Times New Roman","serif";
+	font-weight:bold;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p
+	{margin-right:0in;
+	margin-left:0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-link:"Heading 1";
+	font-family:"Arial","sans-serif";
+	font-weight:bold;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<p class=MsoNoSpacing><strong><span style='font-size:18.0pt'>Ant Script to Update/Install
+Eclipse </span></strong></p>
+
+<p class=MsoNoSpacing><strong><span style='font-size:18.0pt'>and what is the
+Right Way to Update Eclipse</span></strong></p>
+
+<p>by&nbsp; <a href="mailto:oleg_shteynbuk@yahoo.com">Oleg Shteynbuk</a></p>
+
+<p>&nbsp;</p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744215">Introduction<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>1</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744216">Quick Start<span
+style='color:windowtext;display:none;text-decoration:none'> </span><span
+style='color:windowtext;display:none;text-decoration:none'>2</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744217">How to Use<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>2</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744218">Directory
+Structure<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>4</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744219">What is the
+Right Way to Update?<span style='color:windowtext;display:none;text-decoration:
+none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc3><span class=MsoHyperlink><a href="#_Toc287744220">Introduction<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc3><span class=MsoHyperlink><a href="#_Toc287744221">Preserving
+preferences, projects, and plugins<span style='color:windowtext;display:none;
+text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc3><span class=MsoHyperlink><a href="#_Toc287744222">External
+plugin directory<span style='color:windowtext;display:none;text-decoration:
+none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>5</span></a></span></p>
+
+<p class=MsoToc3><span class=MsoHyperlink><a href="#_Toc287744223">Final
+thoughts<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>6</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744224">Optional
+Properties<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744225">Checkdir Ant
+Task<span style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
+
+<p class=MsoToc3><span class=MsoHyperlink><a href="#_Toc287744226">Parameters<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>7</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744227">ToDo<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744228">Acknowledgments<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>8</span></a></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc287744229">Feedback<span
+style='color:windowtext;display:none;text-decoration:none'>. </span><span
+style='color:windowtext;display:none;text-decoration:none'>9</span></a></span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1><a name="_Toc287744215"></a><a name="_Toc287355268"></a><a
+name=Introduction></a>Introduction</h1>
+
+<p class=MsoNormal style='text-indent:.5in'>This script started as an effort to
+simplify updates to a new Eclipse build and, over time, evolved to incorporate
+some other related activities. The script has seven main targets and eighteen
+helper targets; the properties file has thirteen properties. All targets and
+properties are discussed in the following chapters. One feature of the script that
+I would like to highlight is the ability to restore the previous Eclipse
+installation; if something gets wrong during an update, your data are not
+corrupted and your workspace is backed up. </p>
+
+<p style='text-indent:.5in'>The script requires Apache Ant (version 1.5.1 or
+later). This script might not work with older versions of Ant as problems were
+reported with Ant 1.4.1.</p>
+
+<p style='text-indent:.5in'><i>Chapters Overview</i>:</p>
+
+<p class=MsoNormal>The <a href="#_Quick_Start">Quick Start</a> is for the users
+who want to look at the code first and figure it out themselves; code comments
+could be of some help.&nbsp;</p>
+
+<p>The <a href="#Directory_Structure">Directory Structure</a> describes how to
+organize Eclipse environment.</p>
+
+<p>The <a href="#_What_is_the">What is the Right Way to Update?</a> contains
+information assembled from different sources related to Eclipse installation
+and update; there is also a discussion on different approaches to installation
+and update.</p>
+
+<p>Other chapters have rather descriptive names.</p>
+
+<p style='text-indent:.5in'>&nbsp;</p>
+
+<h1><a name="_Toc287744216"></a><a name="_Toc287355269"></a><a
+name="Quick_Start"></a><a name="_Quick_Start"></a>Quick Start</h1>
+
+<p style='text-indent:.5in'>The build file is conventionally named build.xml;
+it has seven main targets for users to execute, eighteen helper targets that main
+targets depend upon, and a default target.</p>
+
+<p>Main targets<b>:</b></p>
+
+<ul type=disc>
+ <li class=MsoNormal>install-eclipse </li>
+ <li class=MsoNormal>install-plugins </li>
+ <li class=MsoNormal>uninstall-eclipse </li>
+ <li class=MsoNormal>uninstall-plugins</li>
+ <li class=MsoNormal>backup-workspace</li>
+ <li class=MsoNormal>generate-startup-script</li>
+ <li class=MsoNormal>uninstall-old-version</li>
+</ul>
+
+<p style='margin-left:.5in'>The default target is called usage, and executing ant
+without a target will produce:</p>
+
+<p style='margin-left:.5in'>&gt; usage:</p>
+
+<p style='margin-left:.5in'>[echo] Usage: ant target</p>
+
+<p style='margin-left:.5in;text-indent:.5in'>To restore the previous Eclipse
+installation execute the <i>install-eclipse </i>target that will update a
+previous installation if there was one, and create a new installation if there
+was none; the <i>uninstall-eclipse</i> target will restore previous
+installation if there was one.</p>
+
+<p style='margin-left:.5in;text-indent:.5in'>The <i>installUpdate.properties</i>
+file has seven main properties.&nbsp;In addition to main properties, the<i> </i>file
+has six optional properties. The script comes with optional properties
+commented out.&nbsp;For more details on optional properties see <a
+href="#Optional_Properties">Optional Properties</a>.&nbsp;</p>
+
+<p style='margin-left:.5in;text-indent:.5in'>The <i>build.xml</i> file has seven
+properties and four condition properties, and hopefully you will never need to
+change them; the <i>environment</i> property in the <i>build.xml</i> file is
+not used currently and is commented out.</p>
+
+<h1><a name="_Toc287744217"></a><a name="How_to_Use"></a>How to Use</h1>
+
+<p style='margin-left:.5in'><a name=NOTE></a><u>NOTE</u>:&nbsp; the value of
+the downloadBuild.file property should be set to the name of the Eclipse build
+file. To avoid modifying the downloadBuild.file property after new Eclipse
+build is downloaded, you could rename the downloaded file to the name that is
+set as the downloadBuild.file property value; the name <i>current.zip</i> is
+used in the examples below. However, if you want to keep the name of the
+downloaded Eclipse build intact there is an experimental feature that uses the <i>downloadBuild.dir</i>
+property; see <a href="#Optional_Properties">Optional Properties</a>.&nbsp; </p>
+
+<p style='margin-left:.5in'>Below are the recommended steps; all directory
+names are specified in properties except for the <i>eclipseHome</i> directory that
+is created by the user.</p>
+
+<ul type=disc>
+ <ol start=1 type=1>
+  <li class=MsoNormal>Download <i>installUpdate.zip </i>file from <a
+      href="http://shteynbuk.com/">http://shteynbuk.com/</a></li>
+  <li class=MsoNormal>Create a new directory named <em>eclipseHome</em>.</li>
+  <li class=MsoNormal>Unzip the <i>installUpdate.zip</i> file into <em>eclipseHome</em>
+      directory. A directory named <i>eclipseHome /installUpdate</i> is
+      created. </li>
+  <li class=MsoNormal>Start command prompt. </li>
+  <li class=MsoNormal>cd to <i>eclipseHome /installUpdate </i>directory; there
+      should be the <i>installUpdate.properties </i>file<i>, </i>the<i>
+      build.xml</i> file and eclipse startup<i> </i>files. </li>
+  <li class=MsoNormal>Open the <i>installUpdate.properties</i> file. Property
+      names should be self-explanatory, and the file has usage instructions.
+      You might need to change some property values.&nbsp; For more details see
+      <a href="#Quick_Start">Quick Start</a>.&nbsp; </li>
+  <li class=MsoNormal>To install a new Eclipse build, say 2.1 M3, execute
+      command: <i>ant install-eclipse</i><span style='font-size:10.0pt'>. </span>A
+      new directory <i>current</i> with the startup scripts is created. See <a
+      href="readme.htm#NOTE">NOTE</a>. </li>
+  <li class=MsoNormal>To install plugins execute command: <em>ant
+      install-plugins</em>. A new directory <em>eclipseHome\extPlugins</em> is
+      created as a product extension and linked to the build installed in the
+      p.7 above. All files with .zip extension in the directory (including
+      subdirectories) specified by the property <i>download.plugin.dir</i> are extracted
+      into the proper subdirectories of the <em>eclipseHome\extPlugins </em>directory;
+      and the user don't have to examine any of the .<i>zip</i> files to decide
+      how they should be extracted. It gives the user the ability to organize
+      plugins in different subdirectories.</li>
+  <li class=MsoNormal>To update the 2.1 M3 build to 2.1 M4 build execute
+      command: <em>ant install-eclipse</em>, see <a href="#NOTE">NOTE</a>. The
+      2.1 M4 build is installed into the <i>current</i> directory and the 2.1
+      M3 build is moved into the <i>was_current</i> directory. All necessary links
+      to the external plugin directory are created and the internal workspace
+      is copied from the 2.1 M3 build. For the external workspace a backup is
+      made. A marker file in the external plugin directory is updated. </li>
+  <li class=MsoNormal>To uninstall the 2.1 M4 build execute: <em>ant
+      uninstall-eclipse</em>. The 2.1 M3 build is restored into&nbsp;the <i>current</i>
+      directory and the <i>was_current</i> directory is removed. </li>
+  <li class=MsoNormal>To uninstall the 2.1 M3 build execute: <em>ant
+      uninstall-eclipse</em>. The directory <em>current</em> is deleted. </li>
+  <li class=MsoNormal>To uninstall external plugins execute: <em>ant uninstall-plugins</em>.
+      The directory <em>extPlugins</em> is deleted.</li>
+  <li class=MsoNormal>To backup the workspace execute:&nbsp; <i>ant
+      backup-workspace</i>.&nbsp;</li>
+  <li class=MsoNormal>To sync the eclipse.bat file with the changes in <i>installUpdate.properties
+      </i>file execute <i>ant generate-startup-script, </i>for more details see
+      <a href="#Quick_Start">Quick Start</a>.</li>
+  <li class=MsoNormal>To recompile the checkdir Ant task - cd to the&nbsp; <i>eclipseHome
+      /installUpdate/installUpdateAntUtil </i>directory and execute <i>ant</i>,
+      <i>compile</i> is the default target; other targets are - <i>javadoc</i>
+      and <i>clean</i>.</li>
+  <li class=MsoNormal>To uninstall the previous Eclipse installation executes <i>ant
+      uninstall-old-version</i>, the directory <i>was_current</i> is removed. If
+      you do not want to keep the old installation, use optional property <i>old.version</i>,
+      see <a href="#Optional_Properties">Optional Properties</a>.</li>
+ </ol>
+</ul>
+
+<h1><a name="_Toc287744218"></a><a name="_Toc287355270"></a><a
+name="Directory_Structure"></a>Directory Structure</h1>
+
+<p style='margin-left:.5in'>This chapter should be read after <a
+href="#How_to_Use">How to Use</a> chapter. </p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -
+root&nbsp;for all installations.</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\installUpdate\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- unzipped download with this documentation</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\extPlugins\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- external plugins directory</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\extPlugins\eclipse\</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\extPlugins\eclipse\features</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\extPlugins\eclipse\plugins</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\current\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- current build install </p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\current\eclipse\</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\was_current\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- previous&nbsp; build&nbsp; install</p>
+
+<p style='margin-left:.5in'>C:\eclipseHome\was_current\eclipse\</p>
+
+<p style='margin-left:.5in'>c:\eclipseHome\extWorkspace&nbsp;&nbsp;&nbsp;&nbsp;
+- if you use external workspace </p>
+
+<p style='margin-left:.5in'>F:/javaDownloads/eclipse/current.zip&nbsp;&nbsp;&nbsp;&nbsp;
+-&nbsp;downloaded current Eclipse build </p>
+
+<p style='margin-left:.5in'>F:/javaDownloads/eclipse/plugins/installed&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- plugins downloads that you want to install </p>
+
+<p style='margin-left:.5in'>F:/tmp/eclipse&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-&nbsp; backup directory </p>
+
+<p style='margin-left:.5in'>The following rules are used to extract .zip files:
+if the plugin directory structure in .zip file starts with the eclipse
+directory then it is unzipped into the external plugin directory; if it starts
+with the plugins directory or the features directory then it is unzipped into the
+eclipse directory of the external plugin directory; otherwise it is treated as
+if it starts with a package name and is unzipped into the eclipse/plugins
+directory of the external plugin directory. </p>
+
+<h1><a name="_Toc287744219"></a><a name="_Toc287355271"></a><a
+name="the_Right_Way_to_Update"></a><a name="_What_is_the"></a>What is the Right Way to Update?</h1>
+
+<h3 style='margin-left:.5in'><a name="_Toc287744220">Introduction</a></h3>
+
+<p style='margin-left:.5in'>The 2.1 M3 build was my first Eclipse installation,
+and when the 2.1 M4 build was released I tried to use the Update Manager, but
+without much success. My first impulse was to reinstall everything from
+scratch, but I did not want to loose my preferences, projects, and plugins. </p>
+
+<h3 style='margin-left:.5in'><a name="_Toc287744221">Preserving preferences,
+projects, and plugins</a></h3>
+
+<p style='margin-left:.5in'>To preserve the existing installation a new
+directory was created, and a new build was installed into this new directory
+instead of overriding the existing installation. This new directory became the
+Eclipse installation directory and was renamed accordingly; and the existing
+installation directory was renamed into the previous installation that was kept
+as a backup in case builds were not backward compatible.</p>
+
+<p style='margin-left:.5in'>The workspace directory from the previous
+installation was copied into the new installation directory and that solved the
+preferences and projects issue. What was left were the plugins that did not
+come with the Eclipse installation and were installed separately. Handling of
+these plugins turned out to be more complicated than anticipated.</p>
+
+<p style='margin-left:.5in'>The solution was to install these plugins into a
+separate directory that was named the external plugin directory. There were
+several reasons for the external plugin directory: first, a compatibility issue
+between these extra plugins and a new Eclipse build; second, the ability to
+share the external plugin directory between different Eclipse installations and
+even between developers; and third, the external plugin directory made it much
+easier to experiment with a new plugin.&nbsp;</p>
+
+<h3 style='margin-left:.5in'><a name="_Toc287744222">External plugin directory</a></h3>
+
+<p style='margin-left:.5in'>In order for this directory to be recognized by
+Eclipse it should be created as a Product Extension. How to create a Product
+Extension is described in Eclipse documentation but this description is not
+easy to interpret. The following paragraphs of this chapter contain information
+assembled from different sources related to Eclipse installation and describe
+how the script handles the external plugin directory.</p>
+
+<p style='margin-left:.5in'>First, the external plugin directory structure: it should
+have the .eclipseextension marker file and the&nbsp;<em>eclipse</em>
+subdirectory&nbsp;with the <em>eclipse\features</em>&nbsp;and the&nbsp;<em>eclipse\plugins</em>
+&nbsp;subdirectories, see <a href="#Directory_Structure">Directory Structure</a>&nbsp;chapter.
+</p>
+
+<p style='margin-left:.5in'>Second, the Eclipse&nbsp;installation: it should
+have a link directory with a link file. The link file is a <b>java.io.Properties
+</b>format file, which defines the path to the external plugin directory. There
+are rules for the link file names in the docs; and if I understood them
+correctly you might need different link files for different plugins, but I
+followed swiki recommendations to use the name <i>.link</i> and it was
+sufficient; maybe different link files are needed when you have more than one
+external plugin directory, but I never had more than one. </p>
+
+<p style='margin-left:.5in'>Third, the external plugin directory should be
+linked to the Eclipse installation. It could be linked manually or using the
+Update Manager. To link using the Update Manager: in the Update Manager go to
+the &quot;Feature Updates&quot; view; navigate to the external plugin
+directory; and if a marker file is present, there will be&nbsp;an extension
+icon; right-click on it, on pop-up menu click Link Product Extension; after this
+you might need to restart Eclipse. To link manually, you probably don't need
+the link directory; but if you have the link directory you can get away without
+a marker file, but docs says that you need both. This script creates the
+external plugin directory as a product extension with a marker file and creates
+a link directory too. </p>
+
+<p style='margin-left:.5in'>Forth, when updating to a new build, you also need
+to update the marker file in the external plugin directory and create the eclipse
+start up scripts: eclipse.bat and eclipse.sh. </p>
+
+<h3 style='margin-left:.5in'><a name="_Toc287744223">Final thoughts</a></h3>
+
+<p style='margin-left:.5in'>Unfortunately, different&nbsp;plugin writers use
+different directory structure conventions; for example, not all plugins have
+the <em>plugins</em> directory, no pun intended. If a plugin has the <em>features</em>
+directory then it has the <em>plugins</em> directory too. But&nbsp;if a plugin
+doesn't have the <em>features</em> directory it is still a good idea to have
+the <em>plugins</em> directory in .zip file even if it is obvious that the
+installation should go into the <em>plugins</em> directory, because it forces
+the user to examine a .zip file before each plugin installation. For above
+mentioned reasons, the <i>install-plugins</i> target is rather
+complicated.&nbsp; </p>
+
+<p style='margin-left:.5in'>It is probably a good idea to execute the <i>backup-workspace</i>
+target before experimenting with any new plugin. The workspace is also backed
+up by the <i>uninstall-eclipse</i> target. When installing Eclipse over an
+existing installation: the <i>install-eclipse</i> target backups the external workspace,
+the internal workspace is copied from the previous installation.</p>
+
+<p style='margin-left:.5in'>What drives me crazy is to remember all these small
+bookkeeping details and that was the main motivation behind writing this
+script. And this script can be used as an update manual by the users who prefer
+manual updates.</p>
+
+<h1><a name="_Toc287744224"></a><a name="_Toc287355272"></a><a
+name="Optional_Properties"></a><a name="_Optional_Properties"></a>Optional
+Properties</h1>
+
+<p style='margin-left:.5in'>The <i>installUpdate.properties </i>file has five
+optional properties.&nbsp; Three properties: <i>home.workspace.dir,
+custom.javaw&nbsp; </i>and <i>vm.args,</i> are used to generate the startup
+scripts. When the <i>home.workspace.dir&nbsp; </i>property is set, the external
+workspace is used.&nbsp;The <i>custom.javaw</i> property, as the name suggests,
+is needed to specify the jvm to launch eclipse with, and the <i>vm.args</i>
+property is used to pass arguments to the jvm.&nbsp; </p>
+
+<p style='margin-left:.5in'>If you change any of the optional properties after
+installation, you need to synchronize the startup scripts with these changes; as
+the startup scripts are generated by the <i>install-eclipse</i> target, see
+comments in the <i>installUpdate.properties </i>file. To do this you need to
+run the <i>generate-startup-script</i> target. The following rule is used in the
+startup scripts to select the jvm to start eclipse with: first the <i>custom.javaw</i>
+property is checked, if this property is not defined&nbsp;then the JAVA<i>_HOME</i>
+environment variable is used, and if this variable is not defined then the eclipse
+installation default jvm is used.&nbsp;&nbsp;</p>
+
+<p style='margin-left:.5in'>Two properties: the <i>downloadBuild.dir </i>and
+the <i>old.version</i> are not used in startup scripts. The<i>&nbsp;
+downloadBuild.dir </i>property was introduced to specify the name of the
+directory where a suitable eclipse build could be found instead of specifying the
+build file name. This is an experimental feature that was requested by some
+users who did not like having the downloaded build file to be renamed and
+wanted to keep the original file name. However, the user has to be aware that
+there should be only one suitable build file in this directory. In order to
+enforce this rule, the <i>checkdir</i> Ant task was created; and if there is
+more than one suitable build file then the <i>install-eclipse</i> target will
+fail with the message: &quot;check <i>installUpdate.properties</i>
+file&quot;.&nbsp;The <i>downloadBuild.dir</i> property will be used only if the
+<i>downloadBuild.file</i> property is not set, see comments in <i>installUpdate.properties</i>
+file. The&nbsp;<i>old.version</i> property is set if the user does not want to
+keep the previous installation; the user can also delete the previous
+installation manually by executing the target <i>uninstall-old-version</i> instead
+of using this option.</p>
+
+<p style='margin-left:.5in'>The script comes with optional properties commented
+out.&nbsp;</p>
+
+<h1><a name="_Toc287744225"></a><a name="_Toc287355273"></a><a name=Checkdir></a>Checkdir
+Ant Task&nbsp;</h1>
+
+<p style='margin-left:.5in'>This Ant task sets a property if a suitable eclipse
+build is available in the download directory. Currently it checks that only one
+file with <i>.zip</i> extension exists in this directory. This task may also be
+used as a condition by the Ant condition task. This task is similar to Ant
+Available task.</p>
+
+<h3 style='margin-left:.5in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a
+name="_Toc287744226"></a><a name="_Toc287355274">Parameters</a></h3>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0
+ style='margin-left:.5in'>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal><b>Attribute</b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal><b>Description</b></p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'><b>Required</b></p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>property</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>The name of the property to set.</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Yes</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>value</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>The value to set the property to. Defaults to
+  &quot;true&quot;.</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'>No</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>dir</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal>directory to check</p>
+  </td>
+  <td valign=top style='padding:1.5pt 1.5pt 1.5pt 1.5pt'>
+  <p class=MsoNormal align=center style='text-align:center'>Yes</p>
+  </td>
+ </tr>
+</table>
+
+<p style='margin-left:.5in'>I was also experimenting with using regular
+expressions instead of hardcoded .<i>zip </i>extension;&nbsp;or using nested
+filesets or patternsets elements, but decided against these features. Regular expressions
+usually are not used to specify file names, and using filesets and patternsets
+looked like overkill. It was also not clear if there was enough interest in
+this task to justify all this complexity.</p>
+
+<p style='margin-left:.5in'>The Checkdir task is in the <i>installUpdateAntUtil</i>
+directory, and the <i>build.xml</i> file in this directory has three targets: <i>compile</i>,
+<i>clean</i> and <i>javadoc</i>; <i>compile</i> is the default
+target.&nbsp;Make sure that CheckDir.class is in the classpath. Having
+&quot;.&quot; in the classpath is one way of doing it, because the script will
+most likely be executed from the <i>eclipseHome /installUpdate </i>directory.</p>
+
+<h1><a name="_Toc287744227"></a><a name=Todo></a>ToDo </h1>
+
+<ul type=disc>
+ <ul type=circle>
+  <li class=MsoNormal>A GUI front end could be added to the script with a file
+      selection dialog. </li>
+  <li class=MsoNormal>The script probably could be changed to have the download
+      of a new build and the update of the previous build to be in one target,
+      then the user do not need to download the build manually and the property
+      for the downloaded file is not needed either. </li>
+  <li class=MsoNormal>Question: should&nbsp;such functionality be part
+      of&nbsp;the Update Manager or should it be a standalone program, sort of
+      installation program that most windows programs have? </li>
+ </ul>
+</ul>
+
+<h1><a name="_Toc287744228"></a><a name="_Toc287355275"></a><a
+name=Acknowledgments></a>Acknowledgments</h1>
+
+<p style='margin-left:.5in'>This script started after the discussion thread on <a
+href="news://www.eclipse.org/eclipse.tools"><b>news://www.eclipse.org/eclipse.tools</b></a>
+&quot;how to upgrade&quot;, where main tips came from Christophe Elek and
+Marcus Malcom.<span style='font-size:10.0pt'> </span>Christophe Elek's post was
+actually a starting point for me.&nbsp; For a short time that I have
+been&nbsp;on eclipse.tools newsgroup this question has popped up several
+times.&nbsp; Different pieces of information also came from <a
+href="http://eclipsewiki.swiki.net/131"><span style='font-size:10.0pt'>swiki</span></a>
+, and Eclipse docs. To have it all in one place and simplify the update process
+was the main motivation for this exercise. </p>
+
+<p style='margin-left:.5in'>After the release of this script, I received valuable
+feedback from Shmuel Siegel, Sascha Freitag, Stephane Ruchet and Mike
+McGowan.&nbsp;The <i>backup-workspace</i> target and the external workspace
+handling are based on the code contributed by Sascha Freitag. Sascha also added
+the properties file to the script and the <i>eclipse.bat </i>file filtering
+using the properties file. The&nbsp;e<i>clipse.bat</i> is based on the code
+contributed by Stephane Ruchet. Stephane also requested the ability to install
+eclipse using a directory name instead of a file name and contributed the first
+draft of the code for an experimental feature, see <a
+href="#_Optional_Properties">Optional Properties</a>. </p>
+
+<h1><a name=Feedback></a><a name="_Toc287744229"></a><a name="_Toc287355276">Feedback</a>
+</h1>
+
+<p class=MsoNormal style='text-indent:.5in'><a href="http://shteynbuk.com/">http://shteynbuk.com/</a></p>
+
+<p class=MsoNormal style='text-indent:.5in'>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

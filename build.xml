@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+		property values are names of the directories and should be self-explanatory.
+
+		Author: Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)
+		Changes:
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	12.06.2003
+			- added linux version, eclipse.sh file is generated 
+			- tar and zip files handled differently
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	11.06.2003
+			- added handling of plugin that don't need unzip, just copy jar file
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	11.2003
+			- added classpath attribute to taskdef
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	11.06.2003
+			- added classpath attribute to taskdef
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	26.5.2003
+		    - updated install-plugins target to handle plugins with directory structure
+		      that starts with eclipse directory.
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	16.3.2003
+			- added main target uninstall-old-version and helper target remove-old-version-if-needed
+			- added optional property old.version
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	4.3.2003
+			- added targets: validate-available-build, exit-if-build-not-available
+			- changed property name from currentBuild.file.name to downloadBuild.file ,
+			- added Ant task checkdir
+		Stephane Ruchet (ruchet@besancon.sema.slb.com) 13.2.2003
+			- added targets: extract-current-from-dir, extract-current-zipfile
+			  and optional directory property for downloaded build.
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	12.2.2003
+			- added target generate-startup-script
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	21.1.2003
+			- install-plugins target will unzip files from dir specified in download.plugin.dir property
+				and all its subdirectories into external plugin dir.
+				no need to have unzip task for each plugin.
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	20.1.2003
+			- changed dir structure: introduced current and was_current dir,
+				install always go into current dir and previous install, if one exist, become was_current
+				uninstall wiil restore previous install, if one exist
+			- removed properties: currentBuild.name, updateBuild.name, updateBuild.file, download.eclipse.dir
+			- property downloadBuild.file now should include absolute path
+			- added targets: backup-workspace, validate-installation, validate-was_installation,
+				update-installation, rename-installation, backup-internal, update-plugins_links, restore-old
+			- removed targets: update-eclipse, uninstall-update
+		Oleg Shteynbuk (oleg_shteynbuk@yahoo.com)	18.1.2003
+			- added extPlugins.path property
+		Sascha Freitag(freitag@objtec.com)	14.1.2003
+			- added external workspace
+			- moved configuration properties into property file
+	-->
+<project basedir="../" default="usage" name="updateInstall">
+	<taskdef name="checkdir" classname="installUpdateAntUtil.CheckDir" classpath="./installUpdate" />
+
+	<property name="properties.file" value="${basedir}/installUpdate/installUpdate.properties" />
+	<property file="${properties.file}" />
+	<property name="currentBuild.dir" value="current" />
+	<property name="was.currentBuild.dir" value="was_current" />
+	<property name="tmp.dir" value="tmp" />
+	<property name="extPlugins.dir" value="${home.extPlugins.dir}/eclipse" />
+	<property name="current.eclipse.dir" value="${currentBuild.dir}/eclipse" />
+
+	<!-- <property environment="myenv" /> -->
+
+	<!--
+		install current eclipse build.
+		create directory, unzip downloaded file into this directory, copy eclipse.bat
+		move previous installation, if one exist, into was.currentBuild.dir
+		update plugins link
+      -->
+	<target name="install-eclipse" depends="prepare-install,validate-installation,validate-plugins" description="install currentBuild">
+		<antcall target="extract-current-file" />
+		<antcall target="extract-current-from-dir" />
+
+		<antcall target="update-installation" />
+		<antcall target="rename-installation" />
+
+		<antcall target="generate-startup-script" />
+		<antcall target="update-plugins" />
+		<antcall target="remove-old-version-if-needed" />
+
+		<chmod dir="${current.eclipse.dir}" perm="755" includes="*.sh">
+		</chmod>
+		<chmod file="${current.eclipse.dir}/eclipse" perm="711">
+		</chmod>
+	</target>
+
+	<target name="extract-current-file" if="downloadBuild.file" >
+		<antcall target="extract-if-zip" />
+		<antcall target="extract-if-tar" />
+	</target>
+	<target name="extract-if-zip" unless="eclipse.tar" >
+		<unzip src="${downloadBuild.file}" dest="${tmp.dir}" />
+	</target>
+	<target name="extract-if-tar" if="eclipse.tar" >
+		<untar src="${downloadBuild.file}" dest="${tmp.dir}" />
+	</target>
+
+	<target name="extract-current-from-dir" unless="downloadBuild.file" >
+		<antcall target="exit-if-build-not-available" />
+
+		<antcall target="extract-from-dir-if-zip" />
+		<antcall target="extract-from-dir-if-tar" />
+	</target>
+	<target name="extract-from-dir-if-zip" unless="eclipse.tar" >
+		<unzip dest="${tmp.dir}">
+			<fileset dir="${downloadBuild.dir}">
+				<include name="*.zip"/>
+			</fileset>
+		</unzip>
+	</target>
+	<target name="extract-from-dir-if-tar" if="eclipse.tar">
+		<untar dest="${tmp.dir}">
+			<fileset dir="${downloadBuild.dir}">
+				<include name="*.tar" />
+			</fileset>
+		</untar>
+	</target>
+
+	<target name="validate-available-build">
+		<checkdir dir="${downloadBuild.dir}" property="build.present" />
+	</target>
+
+	<target name="exit-if-build-not-available" depends="validate-available-build" unless="build.present">
+		<fail message="check &quot;installUpdate.properties&quot; file"/>
+	</target>
+
+	<target name="generate-startup-script" description="generate startup script">
+		<filter filtersfile="${properties.file}" />
+		<copy file="${basedir}/installUpdate/eclipse.bat" todir="${currentBuild.dir}/eclipse" filtering="true" overwrite="yes" />
+		<copy file="${basedir}/installUpdate/eclipse.sh" todir="${currentBuild.dir}/eclipse" filtering="true" overwrite="yes" />
+	</target>
+
+	<target name="prepare-install">
+		<mkdir dir="${tmp.dir}" />
+	</target>
+	<target name="validate-installation">
+		<available file="${currentBuild.dir}" type="dir" property="installation.present" />
+	</target>
+	<target name="validate-was_installation">
+		<available file="${was.currentBuild.dir}" type="dir" property="was.installation.present" />
+	</target>
+	<target name="update-installation" if="installation.present">
+		<delete dir="${was.currentBuild.dir}" />
+		<move todir="${was.currentBuild.dir}" >
+			<fileset dir="${currentBuild.dir}" />
+		</move>
+		<move todir="${currentBuild.dir}" >
+			<fileset dir="${tmp.dir}" />
+		</move>
+		<antcall target="internal-workspace" />
+		<antcall target="backup-external" />
+	</target>
+	<target name="rename-installation" unless="installation.present">
+		<move todir="${currentBuild.dir}" >
+			<fileset dir="${tmp.dir}" />
+		</move>
+	</target>
+	<target name="internal-workspace" unless="home.workspace.dir">
+		<mkdir dir="${currentBuild.dir}/eclipse/workspace" />
+		<copy todir="${currentBuild.dir}/eclipse/workspace">
+			<fileset dir="${was.currentBuild.dir}/eclipse/workspace" />
+		</copy>
+	</target>
+
+	<target name="backup-external" if="home.workspace.dir">
+		<tstamp />
+		<zip basedir="${home.workspace.dir}" destfile="${backup.workspace.dir}/workspace_${DSTAMP}_${TSTAMP}.zip" />
+	</target>
+	<target name="backup-internal" unless="home.workspace.dir">
+		<tstamp />
+		<zip basedir="${currentBuild.dir}/eclipse/workspace" destfile="${backup.workspace.dir}/workspace_${DSTAMP}_${TSTAMP}.zip" />
+	</target>
+
+	<target name="backup-workspace" description="backup workspace">
+		<antcall target="backup-internal" />
+		<antcall target="backup-external" />
+	</target>
+
+	<!--
+		sets the extPlugins.present property to the value "true"
+		if the directory extPlugins is found
+      -->
+	<target name="validate-plugins">
+		<available file="${home.extPlugins.dir}" type="dir" property="extPlugins.present" />
+	</target>
+	<target name="prepare-plugins" unless="extPlugins.present">
+		<mkdir dir="${home.extPlugins.dir}" />
+		<mkdir dir="${extPlugins.dir}" />
+		<mkdir dir="${extPlugins.dir}/plugins" />
+		<mkdir dir="${extPlugins.dir}/features" />
+	</target>
+	<!--
+		install plugins in external directory as product extension.
+		create plugin dir if needed, create marker file, make links from currentBuild
+		because plugin writers are not consistent in dir structure this target looks complicated,
+		see readme.htm for explanations.
+		does not work without tmp dir, according to ant docs it should, filed bug report.
+      -->
+	<target name="install-plugins" depends="validate-plugins,prepare-plugins"
+					description="install external plugins">
+		<mkdir dir="${home.extPlugins.dir}/tmp" />
+		<unzip dest="${home.extPlugins.dir}/tmp">
+			<fileset dir="${download.plugin.dir}">
+				<include name="**/*.zip"/>
+			</fileset>
+		</unzip>
+		<copy todir="${home.extPlugins.dir}/tmp">
+			<fileset dir="${copy.jars.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${extPlugins.dir}/plugins">
+			<fileset dir="${home.extPlugins.dir}/tmp">
+				<exclude  name="plugins/**"/>
+				<exclude  name="features/**"/>
+				<exclude  name="eclipse/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${extPlugins.dir}">
+			<fileset dir="${home.extPlugins.dir}/tmp">
+				<include  name="plugins/**"/>
+				<include  name="features/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${home.extPlugins.dir}">
+			<fileset dir="${home.extPlugins.dir}/tmp">
+				<include  name="eclipse/**"/>
+			</fileset>
+		</copy>
+		<delete dir="${home.extPlugins.dir}/tmp" />
+		<antcall target="update-plugins_links" />
+	</target>
+	<target name="update-plugins" if="extPlugins.present">
+		<antcall target="update-plugins_links" />
+	</target>
+	<!--
+		update marker file and create links
+      -->
+	<target name="update-plugins_links" >
+		<copy file="${currentBuild.dir}/eclipse/.eclipseproduct" todir="${extPlugins.dir}" />
+		<move file="${extPlugins.dir}/.eclipseproduct" tofile="${extPlugins.dir}/.eclipseextension" />
+		<mkdir dir="${currentBuild.dir}/eclipse/links" />
+		<filter filtersfile="${properties.file}" />
+		<copy file="${basedir}/installUpdate/links/.link" todir="${currentBuild.dir}/eclipse/links" filtering="true" />
+	</target>
+
+	<!--
+		delete current installation, backup workspace just in case...
+		if old install exist restore it.
+      -->
+	<target name="uninstall-eclipse" depends="validate-was_installation" description="uninstall currentBuild">
+		<antcall target="backup-workspace" />
+		<delete dir="${currentBuild.dir}" />
+		<antcall target="restore-old" />
+	</target>
+	<target name="restore-old" if="was.installation.present">
+		<mkdir dir="${currentBuild.dir}" />
+		<move todir="${currentBuild.dir}" >
+			<fileset dir="${was.currentBuild.dir}" />
+		</move>
+	</target>
+	<target name="remove-old-version-if-needed" if="old.version">
+		<antcall target="uninstall-old-version" />
+	</target>
+	<target name="uninstall-old-version" description="delete saved installation">
+		<delete dir="${was.currentBuild.dir}" />
+	</target>
+
+	<!--
+		delete plugins directory.
+		maybe remove link directory in future, for now it does not matter
+      -->
+	<target name="uninstall-plugins" description="uninstall external plugins">
+		<delete dir="${home.extPlugins.dir}" />
+	</target>
+
+	<target name="usage">
+		<echo message="Usage: ant target" />
+	</target>
+
+</project>
